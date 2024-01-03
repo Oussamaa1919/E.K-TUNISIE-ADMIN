@@ -1,0 +1,12 @@
+Reference,Image,Libelle,Categorie,Montant(TTC),Quantite,CategorieID,PtsFids,Prix
+100001,img1.jpg,Nom Produit 1,Viennoiseries,"50,5",100,2,10,"8,9"
+100002,img1.jpg,Nom Produit 2,Viennoiseries,"50,5",100,2,10,"8,9"
+100003,img1.jpg,Nom Produit 3,Viennoiseries,"50,5",100,2,10,"8,9"
+100004,img1.jpg,Nom Produit 4,Viennoiseries,"50,5",100,2,10,"8,9"
+100005,img1.jpg,Nom Produit 5,Viennoiseries,"50,5",100,2,10,"8,9"
+100006,img1.jpg,Nom Produit 6,Viennoiseries,"50,5",100,2,10,"8,9"
+100007,img1.jpg,Nom Produit 7,Viennoiseries,"50,5",100,2,10,"8,9"
+100008,img1.jpg,Nom Produit 8,Viennoiseries,"50,5",100,2,10,"8,9"
+100009,img1.jpg,Nom Produit 9,Viennoiseries,"50,5",100,2,10,"8,9"
+100010,img1.jpg,Nom Produit 10,Viennoiseries,"50,5",100,2,10,"8,9"
+100011,img1.jpg,Nom Produit 11,Viennoiseries,"50,5",100,2,10,"8,9"
