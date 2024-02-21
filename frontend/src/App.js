@@ -1,22 +1,21 @@
-import React, { lazy, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import './App.css';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Routes,Navigate } from 'react-router-dom'
 import { themeChange } from 'theme-change'
-import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useDispatch } from 'react-redux';
-import { logout } from '../src/features/common/authSlice';
-import { Outlet } from 'react-router-dom';
+import { logout } from './slices/authSlice';
 import Layout from './containers/Layout'
 import Login from'./pages/Login'
 import ForgotPassword from'./pages/ForgotPassword'
 import Register from'./pages/Register'
-import Documentation from'./pages/Documentation'
-//import 
+import { useSelector } from 'react-redux'
+ 
 
 
 const App = () => {
   const dispatch = useDispatch();
+  const { userInfo } = useSelector(state => state.auth);
 
   useEffect(() => {
     const expirationTime = localStorage.getItem('expirationTime');
@@ -42,11 +41,11 @@ const App = () => {
         <Route path="/login" element={<Login />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/documentation" element={<Documentation />} />
+          
           
           {/* Place new routes over this */}
           <Route path="/app/*" element={<Layout />} />
-
+          <Route path="*" element={<Navigate to={userInfo ? "/app/dashboard" : "/login"} replace />}/>
 
         </Routes>
       </Router>

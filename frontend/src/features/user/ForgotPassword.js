@@ -4,36 +4,39 @@ import LandingIntro from './LandingIntro'
 import ErrorText from  '../../components/Typography/ErrorText'
 import InputText from '../../components/Input/InputText'
 import CheckCircleIcon  from '@heroicons/react/24/solid/CheckCircleIcon'
+import { useSendPasswordMutation } from '../../slices/usersApiSlice'
+import { showNotification } from '../common/headerSlice'
+import { useDispatch } from 'react-redux';
 
 function ForgotPassword(){
-
-    const INITIAL_USER_OBJ = {
-        emailId : ""
-    }
-
-    const [loading, setLoading] = useState(false)
     const [errorMessage, setErrorMessage] = useState("")
-    const [linkSent, setLinkSent] = useState(false)
-    const [userObj, setUserObj] = useState(INITIAL_USER_OBJ)
+    const dispatch = useDispatch();
 
-    const submitForm = (e) =>{
-        e.preventDefault()
-        setErrorMessage("")
-
-        if(userObj.emailId.trim() === "")return setErrorMessage("Email Id is required! (use any value)")
-        else{
-            setLoading(true)
-            // Call API to send password reset link
-            setLoading(false)
-            setLinkSent(true)
+    const [email, setEmail] = useState('');
+    const [sendPassword, { isLoading }] = useSendPasswordMutation();
+    const submitHandler = async (e) => {
+        e.preventDefault();
+        try {
+            if(email.trim() === "")return setErrorMessage("Email is required! ")
+            else{
+            await sendPassword({ email});
+            setErrorMessage('mot de passe envoyé');
+            }   
+        } catch (err) {
+          setErrorMessage(err?.data?.message || err.error);
+         
         }
-    }
+      };
+    
 
-    const updateFormValue = ({updateType, value}) => {
-        setErrorMessage("")
-        setUserObj({...userObj, [updateType] : value})
-    }
+    
+    
 
+    
+
+    
+
+    
     return(
         <div className="min-h-screen bg-base-200 flex items-center">
             <div className="card mx-auto w-full max-w-5xl  shadow-xl">
@@ -42,39 +45,31 @@ function ForgotPassword(){
                         <LandingIntro />
                 </div>
                 <div className='py-24 px-10'>
-                    <h2 className='text-2xl font-semibold mb-2 text-center'>Forgot Password</h2>
+                    <h2 className='text-2xl font-semibold mb-2 text-center'>Mot de passe oublié !</h2>
 
-                    {
-                        linkSent && 
-                        <>
-                            <div className='text-center mt-8'><CheckCircleIcon className='inline-block w-32 text-success'/></div>
-                            <p className='my-4 text-xl font-bold text-center'>Link Sent</p>
-                            <p className='mt-4 mb-8 font-semibold text-center'>Check your email to reset password</p>
-                            <div className='text-center mt-4'><Link to="/login"><button className="btn btn-block btn-primary ">Login</button></Link></div>
+                    <form onSubmit={submitHandler}>
 
-                        </>
-                    }
+                        <div className="mb-4">
 
-                    {
-                        !linkSent && 
-                        <>
-                            <p className='my-8 font-semibold text-center'>We will send password reset link on your email Id</p>
-                            <form onSubmit={(e) => submitForm(e)}>
+                            <input  type='email'
+                                    placeholder='* email'
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    className="input  input-bordered w-full mt-4"
+                                   />
+                                   
+                            
 
-                                <div className="mb-4">
+                        </div>
 
-                                    <InputText type="emailId" defaultValue={userObj.emailId} updateType="emailId" containerStyle="mt-4" labelTitle="Email Id" updateFormValue={updateFormValue}/>
+                     
 
+                        
+                        <button type="submit" className={"btn mt-2 w-full btn-primary" + (isLoading ? " loading" : "")}>Envoyer</button>
+                        <div className='text-right text-primary'><Link to="/login"><span className="text-sm  inline-block  hover:text-primary hover:underline hover:cursor-pointer transition duration-200">retour à la connexion</span></Link></div>
 
-                                </div>
-
-                                <ErrorText styleClass="mt-12">{errorMessage}</ErrorText>
-                                <button type="submit" className={"btn mt-2 w-full btn-primary" + (loading ? " loading" : "")}>Send Temporary Password</button>
-
-                                <div className='text-center mt-4'>Don't have an account yet? <Link to="/register"><button className="  inline-block  hover:text-primary hover:underline hover:cursor-pointer transition duration-200">Register</button></Link></div>
-                            </form>
-                        </>
-                    }
+                        <ErrorText styleClass="mt-8">{errorMessage}</ErrorText>
+                    </form>
                     
                 </div>
             </div>

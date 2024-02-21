@@ -35,7 +35,7 @@ function LineChart(){
   };
 
   
-  const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
+  const labels = ['E.K Lac 1', 'E.K Ariana', 'E.K T.M', 'E.K Carthage', 'E.K Gammarth', 'E.K Azure City', 'E.K tunis'];
 
   const data = {
   labels,

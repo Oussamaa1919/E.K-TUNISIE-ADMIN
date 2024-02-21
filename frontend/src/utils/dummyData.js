@@ -43,8 +43,23 @@ module.exports = Object.freeze({
         {name : "test5", discount : "10%", date_debut : "12/05/2023", date_fin : "30/05/2023", Nouveau_Prix : "190dt", date : moment().add(-2, 'd').endOf('day')},
         {name : "test6", discount : "20%", date_debut : "12/05/2023", date_fin : "30/05/2023", Nouveau_Prix : "230dt", date : moment().add(-2, 'd').endOf('day')},
         {name : "test7", discount : "30%", date_debut : "12/05/2023", date_fin : "30/05/2023", Nouveau_Prix : "331dt", date : moment().add(-2, 'd').endOf('day')},
-        
-        
-    
+    ],
+    RECENT_VENTE_FLASH : [
+        {name : "test1",  duree : "5h",  Prix : "100dt", date : moment().endOf('day')},
+        {name : "test2",  duree : "48h", Prix : "190dt", date : moment().add(-1, 'd').endOf('day')},
+        {name : "test3", duree : "24h", Prix : "112dt", date : moment().add(-1, 'd').endOf('day')},
+        {name : "test4",  duree : "24h", Prix : "111dt", date : moment().add(-1, 'd').endOf('day')},
+        {name : "test5", duree : "9h", Prix : "190dt", date : moment().add(-2, 'd').endOf('day')},
+        {name : "test6",  duree : "48h",  Prix : "230dt", date : moment().add(-2, 'd').endOf('day')},
+        {name : "test7",  duree : "48h",  Prix : "331dt", date : moment().add(-2, 'd').endOf('day')},
+    ],
+    RECENT_PRODUITS : [
+        {reference : "1000011", libelle : "produit1",  catégorie : "Restaurant", montant : "50,5",qunatite:"100",categorieId:"2",sldfid:"8",prix:"8,9 DT"},
+        {reference : "1000012",  libelle : "produit2", catégorie : "Restaurant", montant :"50,5",qunatite:"100",categorieId:"2",sldfid:"8",prix:"8,9 DT"},
+        {reference : "1000013", libelle : "produit3", catégorie : "Restaurant", montant : "50,5",qunatite:"100",categorieId:"2",sldfid:"8",prix:"8,9 DT"},
+        {reference : "1000014",  libelle : "produit4", catégorie : "Restaurant", montant :"50,5",qunatite:"100",categorieId:"2",sldfid:"8",prix:"8,9 DT"},
+        {reference : "1000015", libelle : "produit5", catégorie : "Restaurant", montant : "50,5",qunatite:"100",categorieId:"2",sldfid:"8",prix:"8,9 DT"},
+        {reference : "1000016",  libelle : "produit6",  catégorie : "Restaurant", montant :"50,5",qunatite:"100",categorieId:"2",sldfid:"8",prix:"8,9 DT"},
+        {reference : "1000017",  libelle : "produit7",  catégorie : "Restaurant", montant : "50,5",qunatite:"100",categorieId:"2",sldfid:"8",prix:"8,9 DT"},
     ]
 });

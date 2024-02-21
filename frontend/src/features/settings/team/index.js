@@ -4,9 +4,12 @@ import { useDispatch, useSelector } from "react-redux"
 import TitleCard from "../../../components/Cards/TitleCard"
 import { showNotification } from '../../common/headerSlice'
 import { openModal } from "../../common/modalSlice"
+import ProfilePic from "../../../images/profile-picture.png"
+import { useGetAdminsQuery,useDeleteMemberMutation } from "../../../slices/usersApiSlice"
+import TrashIcon from '@heroicons/react/24/outline/TrashIcon'
+
 import { CONFIRMATION_MODAL_CLOSE_TYPES, MODAL_BODY_TYPES } from '../../../utils/globalConstantUtil'
 const TopSideButtons = () => {
-
     const dispatch = useDispatch()
 
     const openAddNewLeadModal = () => {
@@ -17,36 +20,31 @@ const TopSideButtons = () => {
 
         <div className="inline-block float-right">
             <button className="btn px-6 btn-sm normal-case btn-primary float-right ml-2"onClick={() => openAddNewLeadModal()} >Ajouter un Membre</button>
-        
-            
         </div>
     )
 }
 
 
 
-const TEAM_MEMBERS = [
-    {name : "Alex", avatar : "https://reqres.in/img/faces/1-image.jpg", email : "alex@dashwind.com", phone : "28138048", joinedOn : moment(new Date()).add(-5*1, 'days').format("DD MMM YYYY"), lastActive : "28138048"},
-    {name : "Ereena", avatar : "https://reqres.in/img/faces/2-image.jpg", email : "ereena@dashwind.com", phone : "28138048", joinedOn : moment(new Date()).add(-5*2, 'days').format("DD MMM YYYY"), lastActive : "22123567"},
-    {name : "John", avatar : "https://reqres.in/img/faces/3-image.jpg", email : "jhon@dashwind.com", phone : "28138048", joinedOn : moment(new Date()).add(-5*3, 'days').format("DD MMM YYYY"), lastActive : "99885644"},
-    {name : "Matrix", avatar : "https://reqres.in/img/faces/4-image.jpg", email : "matrix@dashwind.com", phone : "28138048", joinedOn : moment(new Date()).add(-5*4, 'days').format("DD MMM YYYY"), lastActive : "55666999"},
-    {name : "Virat", avatar : "https://reqres.in/img/faces/5-image.jpg", email : "virat@dashwind.com", phone : "28138048", joinedOn : moment(new Date()).add(-5*5, 'days').format("DD MMM YYYY"), lastActive : "52003001"},
-    {name : "Miya", avatar : "https://reqres.in/img/faces/6-image.jpg", email : "miya@dashwind.com", phone : "28138048", joinedOn : moment(new Date()).add(-5*7, 'days').format("DD MMM YYYY"), lastActive : "54112568"},
 
-]
 
 function Team(){
+    
+    
 
-
-    const [members, setMembers] = useState(TEAM_MEMBERS)
-
-    const getRoleComponent = (role) => {
-        if(role  === "Admin")return <div className="badge badge-secondary">{role}</div>
-        if(role  === "Manager")return <div className="badge">{role}</div>
-        if(role  === "Owner")return <div className="badge badge-primary">{role}</div>
-        if(role  === "Support")return <div className="badge badge-accent">{role}</div>
-        else return <div className="badge badge-ghost">{role}</div>
-    }
+    const { data: users, refetch, isLoading, error } = useGetAdminsQuery();
+    const [deleteMember] = useDeleteMemberMutation();
+    const [errorMessage, setErrorMessage] = useState("")
+    const deleteHandler = async (id) => {
+        if (window.confirm('Continuez !')) {
+          try {
+            await deleteMember(id);
+            refetch();
+          } catch (err) {
+            setErrorMessage(err?.data?.message || err.error);
+          }
+        }
+      };
 
     return(
         <>
@@ -60,31 +58,33 @@ function Team(){
                     <tr>
                         <th>Name</th>
                         <th>Email Id</th>
-                        <th>Joined On</th>
+                        <th>TYPE</th>
                         <th>Phone</th>
+                    <th>Delete</th>
                     </tr>
                     </thead>
                     <tbody>
                         {
-                            members.map((l, k) => {
+                           users && users.map((user) => {
                                 return(
-                                    <tr key={k}>
+                                    <tr key={user._id}>
                                     <td>
                                         <div className="flex items-center space-x-3">
                                             <div className="avatar">
                                                 <div className="mask mask-circle w-12 h-12">
-                                                    <img src={l.avatar} alt="Avatar" />
+                                                    <img src={ProfilePic} alt="Avatar" />
                                                 </div>
                                             </div>
                                             <div>
-                                                <div className="font-bold">{l.name}</div>
+                                                <div className="font-bold">{user.firstname}  {user.lastname}</div>
                                             </div>
                                         </div>
                                     </td>
-                                    <td>{l.email}</td>
-                                    <td>{l.joinedOn}</td>
-                                    <td>{l.lastActive}</td>
-                                    
+                                    <td>{user.email}</td>
+                                    <td>{user.type}</td>
+                                    <td>{user.phone}</td>
+                                    <td><button className="btn btn-square btn-ghost" onClick={() => deleteHandler(user._id)} ><TrashIcon className="w-5"/></button></td>
+
                                     </tr>
                                 )
                             })

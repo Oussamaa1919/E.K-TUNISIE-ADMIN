@@ -3,7 +3,7 @@ import generateToken from '../utils/genrerateToken.js';
 import Admin from '../models/adminModel.js';
 import { check, validationResult } from 'express-validator';
 import bcrypt from 'bcryptjs';
-
+import {sendPasswordEmail} from './emailController.js'
 // Import bcrypt for password hashing
 // @desc    Auth user & get token
 // @route   POST /api/users/auth
@@ -15,7 +15,7 @@ const authUser = asyncHandler(async (req, res) => {
 
   if (admin && (await admin.matchPassword(password))) {
     generateToken(res, admin._id);
-
+    
     res.json({
       _id: admin._id,
       firtsname: admin.firstname,
@@ -312,6 +312,82 @@ const deleteAdmin = asyncHandler(async (req, res) => {
 }
 });
 
+// @desc    Get all users
+// @route   GET /api/users
+// @access  Private/Admin
+const getAdmins = asyncHandler(async (req, res) => {
+  const admins = await Admin.find({}).select('-password');;
+  res.json(admins);
+});
+
+// @desc    Logout user / clear cookie
+// @route   POST /api/users/logout
+// @access  Public
+const logoutAdmin = (req, res) => {
+  res.cookie('jwt', '', {
+    httpOnly: true,
+    expires: new Date(0),
+  });
+  res.status(200).json({ message: 'Logged out successfully' });
+};
 
 
-export { authUser, registerAdmin, getAdminById, updatePassword, addMember, updateAdmin, deleteAdmin};
+function generateRandomPassword() {
+  const specialChars = '!@#$%^&*()_+';
+  const uppercaseChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  const lowercaseChars = 'abcdefghijklmnopqrstuvwxyz';
+  const newPassword = [];
+
+  // Generate at least one special character and one uppercase character
+  newPassword.push(specialChars[Math.floor(Math.random() * specialChars.length)]);
+  newPassword.push(uppercaseChars[Math.floor(Math.random() * uppercaseChars.length)]);
+
+  // Generate the remaining characters (at least 6) as a combination of uppercase, lowercase, and special characters
+  while (newPassword.length < 8) {
+    const charSet = uppercaseChars + lowercaseChars + specialChars;
+    newPassword.push(charSet[Math.floor(Math.random() * charSet.length)]);
+  }
+
+  // Shuffle the password characters to make it random
+  for (let i = newPassword.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [newPassword[i], newPassword[j]] = [newPassword[j], newPassword[i]];
+  }
+
+  return newPassword.join('');
+}
+const resetAdminPassword = asyncHandler(async (req, res, next) => {
+  try {
+    const { email } = req.body;
+
+    // Generate a new random password
+    const newPassword = generateRandomPassword();
+    console.log('New Password:', newPassword); // Log the generated password
+
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update the admin's password in the database
+    const admin = await Admin.findOneAndUpdate(
+      { email: email },
+      { password: hashedPassword },
+      { new: true }
+    );
+
+    if (!admin) {
+      throw new Error('Admin not found');
+    }
+
+    // Send email with the new password
+    await sendPasswordEmail(email, newPassword);
+
+    res.status(200).json({ success: true, message: 'Password reset successful. Check your email for the new password.' });
+  } catch (error) {
+    // Log any errors that occur during the password reset process
+    console.error('Error resetting password:', error);
+    // Pass the error to the error handling middleware
+    return next(error);
+  }
+});
+
+export { authUser, registerAdmin, getAdminById, updatePassword, addMember, updateAdmin, deleteAdmin,getAdmins,logoutAdmin,resetAdminPassword};

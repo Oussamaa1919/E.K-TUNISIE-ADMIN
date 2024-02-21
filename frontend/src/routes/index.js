@@ -6,18 +6,15 @@ const Dashboard = lazy(() => import('../pages/protected/Dashboard'))
 const Welcome = lazy(() => import('../pages/protected/Welcome'))
 const Page404 = lazy(() => import('../pages/protected/404'))
 const Blank = lazy(() => import('../pages/protected/Blank'))
-const Charts = lazy(() => import('../pages/protected/Charts'))
-const Leads = lazy(() => import('../pages/protected/Leads'))
-const Integration = lazy(() => import('../pages/protected/Integration'))
-const Calendar = lazy(() => import('../pages/protected/Calendar'))
+const Promo = lazy(() => import('../pages/protected/Promo'))
+const Publicité = lazy(() => import('../pages/protected/Publicité'))
 const Team = lazy(() => import('../pages/protected/Team'))
-const Transactions = lazy(() => import('../pages/protected/Transactions'))
-const Bills = lazy(() => import('../pages/protected/Bills'))
+const PointDeVente = lazy(() => import('../pages/protected/PointDeVente'))
 const ProfileSettings = lazy(() => import('../pages/protected/ProfileSettings'))
-const GettingStarted = lazy(() => import('../pages/GettingStarted'))
-const DocFeatures = lazy(() => import('../pages/DocFeatures'))
-const DocComponents = lazy(() => import('../pages/DocComponents'))
+const Client = lazy(() => import('../pages/protected/Client'))
 
+const VenteFlash = lazy(() => import('../pages/protected/VenteFlash'))
+const Produit = lazy(() => import('../pages/protected/Produit'))
 
 const routes = [
   {
@@ -26,13 +23,28 @@ const routes = [
     isPrivate: true,
   },
   {
+    path: '/client', // the url
+    component: Client, // view rendered
+    isPrivate: true,
+  },
+  {
+    path: '/produit', // the url
+    component: Produit, // view rendered
+    isPrivate: true,
+  },
+  {
     path: '/welcome', // the url
     component: Welcome, // view rendered
     isPrivate: true,
   },
   {
-    path: '/leads',
-    component: Leads,
+    path: '/promo',
+    component: Promo,
+    isPrivate: true,
+  },
+  {
+    path: '/venteflash',
+    component: VenteFlash,
     isPrivate: true,
   },
   {
@@ -40,14 +52,10 @@ const routes = [
     component: Team,
     isPrivate: true,
   },
+ 
   {
-    path: '/calendar',
-    component: Calendar,
-    isPrivate: true,
-  },
-  {
-    path: '/transactions',
-    component: Transactions,
+    path: '/pointdevente',
+    component: PointDeVente,
     isPrivate: true,
   },
   {
@@ -55,36 +63,15 @@ const routes = [
     component: ProfileSettings,
     isPrivate: true,
   },
+ 
+
+  
   {
-    path: '/settings-billing',
-    component: Bills,
+    path: '/publicité',
+    component: Publicité,
     isPrivate: true,
   },
-  {
-    path: '/getting-started',
-    component: GettingStarted,
-    isPrivate: true,
-  },
-  {
-    path: '/features',
-    component: DocFeatures,
-    isPrivate: true,
-  },
-  {
-    path: '/components',
-    component: DocComponents,
-    isPrivate: true,
-  },
-  {
-    path: '/integration',
-    component: Integration,
-    isPrivate: true,
-  },
-  {
-    path: '/charts',
-    component: Charts,
-    isPrivate: true,
-  },
+ 
   {
     path: '/404',
     component: Page404,

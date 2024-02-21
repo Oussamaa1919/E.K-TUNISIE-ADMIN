@@ -9,20 +9,24 @@ import cors from 'cors'
 import { notFound, errorHandler } from './middleware/errorMiddleware.js';
 import adminRoutes from './routes/adminRoutes.js';
 import productRoutes from './routes/productRoutes.js'
-
+import clientRoutes from './routes/clientRoutes.js'
 const port = process.env.PORT || 5000;
 
 
 connectDB();
 
 const app = express();
-app.use(cors());
-
+app.use(cookieParser());
+app.use(cors({
+  origin:'http://localhost:3000',
+  credentials: true,
+  optionsSuccessStatus: 200,
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
-app.use('/uploads', express.static('uploads'));
 
+app.use('/uploads', express.static('uploads'));
+app.use('/api/client',clientRoutes)
 app.use('/api/admin', adminRoutes);
 app.use('/api/product',productRoutes);
 

@@ -5,26 +5,26 @@ import LandingIntro from './LandingIntro'
 import ErrorText from  '../../components/Typography/ErrorText'
 import InputText from '../../components/Input/InputText'
 import { useLoginMutation } from '../../slices/usersApiSlice';
-import { setCredentials } from '../../slices/authSlice';
 import { toast } from 'react-toastify';
+import { setCredentials } from '../../slices/authSlice';
 function Login(){
 
     const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
+  const [errorMessage, setErrorMessage] = useState("")
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const [login, { isLoading }] = useLoginMutation();
 
   const { userInfo } = useSelector((state) => state.auth);
-  
+  const jwtCookie = document.cookie.split(';').find(cookie => cookie.trim().startsWith('jwt='));
   
   useEffect(() => {
     if (userInfo) {
-      navigate('/app/welcome');
+      navigate('/app/dashboard');
 
-      console.log({userInfo});
+      
     }
   }, [navigate, userInfo]);
 
@@ -32,13 +32,20 @@ function Login(){
   const submitHandler = async (e) => {
     e.preventDefault();
     try {
+      if (jwtCookie) {
+        console.log('JWT token cookie:', jwtCookie);
+      } else {
+        console.log('JWT token cookie not found.');
+      }
       const res = await login({ email, password }).unwrap();
+      
       dispatch(setCredentials({ ...res }));
-      console.log(res);
+     
       navigate('/app/welcome');
       
     } catch (err) {
-      toast.error(err?.data?.message || err.error);
+      setErrorMessage(err?.data?.message || err.error);
+     
     }
   };
     return(
@@ -49,13 +56,13 @@ function Login(){
                         <LandingIntro />
                 </div>
                 <div className='py-24 px-10'>
-                    <h2 className='text-2xl font-semibold mb-2 text-center'>Login</h2>
+                    <h2 className='text-2xl font-semibold mb-2 text-center'>Connexion</h2>
                     <form onSubmit={submitHandler}>
 
                         <div className="mb-4">
 
                             <input  type='email'
-                                    placeholder='Enter email'
+                                    placeholder='* Email'
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     className="input  input-bordered w-full mt-4"
@@ -63,7 +70,7 @@ function Login(){
                                    
                             <input  type='password'
                             
-                                    placeholder='Enter password'
+                                    placeholder='* Mot De Passe'
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     className="input  input-bordered w-full mt-4"/>
@@ -73,12 +80,13 @@ function Login(){
                      
 
                         
-                        <button type="submit" className={"btn mt-2 w-full btn-primary" + (isLoading ? " loading" : "")}>Login</button>
+                        <button type="submit" className={"btn mt-2 w-full btn-primary" + (isLoading ? " loading" : "")}>Connexion</button>
 
                     </form>
-                    <div className='text-right text-primary'><Link to="/forgot-password"><span className="text-sm  inline-block  hover:text-primary hover:underline hover:cursor-pointer transition duration-200">Forgot Password?</span></Link>
+                    <div className='text-right text-primary'><Link to="/forgot-password"><span className="text-sm  inline-block  hover:text-primary hover:underline hover:cursor-pointer transition duration-200">Mot de passe oublié?</span></Link>
                         </div>
-                    <div className='text-center mt-4'>Don't have an account yet? <Link to="/register"><span className="  inline-block  hover:text-primary hover:underline hover:cursor-pointer transition duration-200">Register</span></Link></div>
+                        <ErrorText styleClass="mt-8">{errorMessage}</ErrorText>
+
 
                 </div>
             </div>

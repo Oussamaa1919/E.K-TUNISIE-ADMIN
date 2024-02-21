@@ -2,11 +2,13 @@ import { useEffect } from 'react'
 import { MODAL_BODY_TYPES } from '../utils/globalConstantUtil'
 import { useSelector, useDispatch } from 'react-redux'
 import { closeModal } from '../features/common/modalSlice'
-import AddLeadModalBody from '../features/leads/components/AddLeadModalBody'
+import AddPromoModalBody from '../features/promo/components/AddPromoModalBody'
+import AddVenteFlashModal from '../features/venteFlash/AddVenteFlashModal'
 import ConfirmationModalBody from '../features/common/components/ConfirmationModalBody'
-import AddptventeModal from '../features/transactions/AddptventeModal'
-import AddPuclicitéModalBody from '../features/integration/AddPuclicitéModalBody'
+import AddptventeModal from '../features/pointsdevente/AddptventeModal'
+import AddPuclicitéModalBody from '../features/publicité/AddPuclicitéModalBody'
 import AddMembreModalBody from '../features/settings/team/AddMembreModalBody'
+import AddProduitModal from '../features/produit/AddProduitModal'
 function ModalLayout(){
 
 
@@ -35,7 +37,9 @@ function ModalLayout(){
                     {        [MODAL_BODY_TYPES.TRANSACTION_ADD_NEW] : <AddptventeModal closeModal={close} extraObject={extraObject}/>,
                              [MODAL_BODY_TYPES.PUBLICITE_ADD_NEW] : <AddPuclicitéModalBody closeModal={close} extraObject={extraObject}/>,
                              [MODAL_BODY_TYPES.MEMBRE_ADD_NEW] : <AddMembreModalBody closeModal={close} extraObject={extraObject}/>,
-                             [MODAL_BODY_TYPES.LEAD_ADD_NEW] : <AddLeadModalBody closeModal={close} extraObject={extraObject}/>,
+                             [MODAL_BODY_TYPES.PROMO_ADD_NEW] : <AddPromoModalBody closeModal={close} extraObject={extraObject}/>,
+                             [MODAL_BODY_TYPES.VENTE_FLASH_ADD_NEW] : <AddVenteFlashModal closeModal={close} extraObject={extraObject}/>,
+                             [MODAL_BODY_TYPES.PRODUIT_ADD_NEW] : <AddProduitModal closeModal={close} extraObject={extraObject}/>,
                              [MODAL_BODY_TYPES.CONFIRMATION] : <ConfirmationModalBody extraObject={extraObject} closeModal={close}/>,
                              [MODAL_BODY_TYPES.DEFAULT] : <div></div>
                     }[bodyType]

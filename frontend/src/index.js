@@ -7,6 +7,7 @@ import store from './app/store'
 import { Provider } from 'react-redux'
 import SuspenseContent from './containers/SuspenseContent';
 import { HelmetProvider } from 'react-helmet-async';
+import { Outlet } from 'react-router-dom';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -15,6 +16,7 @@ root.render(
       <HelmetProvider>
         <Provider store={store}>
             <App />
+            
         </Provider>
         </HelmetProvider>
     </Suspense>

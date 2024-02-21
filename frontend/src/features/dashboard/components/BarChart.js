@@ -23,26 +23,22 @@ function BarChart(){
         },
       };
       
-      const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
+      const labels = ['E.K Lac 1', 'E.K Ariana', 'E.K T.M', 'E.K Carthage', 'E.K Gammarth', 'E.K Azure City', 'E.K tunis'];
       
       const data = {
         labels,
         datasets: [
           {
-            label: 'Store 1',
+            label: 'total Vente ',
             data: labels.map(() => { return Math.random() * 1000 + 500 }),
             backgroundColor: 'rgba(255, 99, 132, 1)',
           },
-          {
-            label: 'Store 2',
-            data: labels.map(() => { return Math.random() * 1000 + 500 }),
-            backgroundColor: 'rgba(53, 162, 235, 1)',
-          },
+          
         ],
       };
 
     return(
-      <TitleCard title={"Revenue"}>
+      <TitleCard title={"Revenue Des Points De Ventes "}>
             <Bar options={options} data={data} />
       </TitleCard>
 

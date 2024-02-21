@@ -7,15 +7,21 @@ import MoonIcon from '@heroicons/react/24/outline/MoonIcon'
 import SunIcon from '@heroicons/react/24/outline/SunIcon'
 import { openRightDrawer } from '../features/common/rightDrawerSlice';
 import { RIGHT_DRAWER_TYPES } from '../utils/globalConstantUtil'
+import logoPath from "../../src/images/logoerickayser.png"
+import { useLogoutMutation } from '../slices/usersApiSlice'
+import { logout } from '../slices/authSlice'
 
-import { NavLink,  Routes, Link , useLocation} from 'react-router-dom'
+
+
+import { NavLink,  Routes, Link , useLocation,useNavigate} from 'react-router-dom'
 
 
 function Header(){
-
+    const [logoutApiCall] = useLogoutMutation();
     const dispatch = useDispatch()
     const {noOfNotifications, pageTitle} = useSelector(state => state.header)
     const [currentTheme, setCurrentTheme] = useState(localStorage.getItem("theme"))
+    const navigate = useNavigate();
 
     useEffect(() => {
         themeChange(false)
@@ -35,11 +41,19 @@ function Header(){
         dispatch(openRightDrawer({header : "Notifications", bodyType : RIGHT_DRAWER_TYPES.NOTIFICATION}))
     }
 
-
-    function logoutUser(){
-        localStorage.clear();
-        window.location.href = '/'
-    }
+    const logoutHandler = async () => {
+        try {
+          await logoutApiCall().unwrap();
+          dispatch(logout());
+          // NOTE: here we need to reset cart state for when a user logs out so the next
+          // user doesn't inherit the previous users cart and shipping
+          
+          navigate('/login');
+        } catch (err) {
+          console.error(err);
+        }
+      }
+   
 
     return(
         <>
@@ -90,7 +104,7 @@ function Header(){
                 <div className="dropdown dropdown-end ml-4">
                     <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
                         <div className="w-10 rounded-full">
-                        <img src="https://placeimg.com/80/80/people" alt="profile" />
+                        <img src={logoPath} alt="profile" />
                         </div>
                     </label>
                     <ul tabIndex={0} className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52">
@@ -100,9 +114,9 @@ function Header(){
                             <span className="badge">New</span>
                             </Link>
                         </li>
-                        <li className=''><Link to={'/app/settings-billing'}>Bill History</Link></li>
+                       
                         <div className="divider mt-0 mb-0"></div>
-                        <li><a onClick={logoutUser}>Logout</a></li>
+                        <li><a onClick={logoutHandler}>Logout</a></li>
                     </ul>
                 </div>
             </div>
