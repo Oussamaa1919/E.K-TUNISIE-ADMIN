@@ -1,46 +1,63 @@
-import { useState } from "react"
+import { useState,useEffect } from "react"
 import { useDispatch } from "react-redux"
 import InputText from '../../components/Input/InputText'
 import ErrorText from '../../components/Typography/ErrorText'
 import { showNotification } from "../common/headerSlice"
 
-import { useAddPDVMutation,useGetPDVsQuery } from "../../slices/pointDeVenteApiSlice"
+import { useGetPDVsQuery,useGetPdvDetailsQuery,useUpdatePdvMutation } from "../../slices/pointDeVenteApiSlice"
 
 
 
-function AddptventeModal({closeModal}){
+function UpdatePtvModal({closeModal,pdvId }){
     const dispatch = useDispatch()
     const [loading, setLoading] = useState(false)
     const [errorMessage, setErrorMessage] = useState("")
     const [name, setName] = useState('');
     const [address, setAddress] = useState('');
     const [rhmanager, setrhmanager] = useState('');
-    const [addPDV, isLoading ,refetch] = useAddPDVMutation();
     const { refetch: refetchPdv } = useGetPDVsQuery();
+    const {
+      data: pdv,
+      isLoading,
+      refetch,
+      error,
+    } = useGetPdvDetailsQuery(pdvId);
+    const [updatePdv, { isLoading: loadingUpdate }] =
+    useUpdatePdvMutation();
     
     const submitHandler = async (e) => {
-        e.preventDefault();
-    
-        
-          try {
-             await addPDV({name,rhmanager,address });
-             await refetchPdv();
-             if (!errorMessage) { // Only dispatch success notification if there's no error message
-                dispatch(showNotification({ message: "Nouvel Point de vente ajouté !!", status: 1 }));
-            }
-          } catch (err) {
+      e.preventDefault();
+      try {
+        await updatePdv({
+          pdvId,
+          name,
+          address,
+          rhmanager,
+          
+        });
+        await refetchPdv();
+        refetch();
+        if (!errorMessage) { // Only dispatch success notification if there's no error message
+          dispatch(showNotification({ message: " Point de vente Modifié !!", status: 1 }));
+      }
+      } catch (err) {
          
-            setErrorMessage(err?.data?.message || err.error);
-            
-          }
+        setErrorMessage(err?.data?.message || err.error);
         
-      };
-    
+      }
+    };
+    useEffect(() => {
+      if (pdv) {
+        setName(pdv.name);
+        setAddress(pdv.address);
+        setrhmanager(pdv.rhmanager);
+        
+      }
+    }, [pdv]);
 
     return(
         <>
 <form onSubmit={submitHandler}>
-
 <div className="mb-4">
 
     <input  type='name'
@@ -70,7 +87,7 @@ function AddptventeModal({closeModal}){
 
 <div className="modal-action">
                 <button  className="btn btn-ghost" onClick={() => closeModal()}>Annuler</button>
-                <button  type="submit" className={"btn btn-primary px-6"} >Ajouter</button>
+                <button  type="submit" className={"btn btn-primary px-6"} >Modifier</button>
             </div>
             
 </form>
@@ -80,4 +97,4 @@ function AddptventeModal({closeModal}){
         </>
     )
 }
-export default AddptventeModal
+export default UpdatePtvModal

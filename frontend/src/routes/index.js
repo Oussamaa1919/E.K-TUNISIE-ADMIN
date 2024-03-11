@@ -12,7 +12,8 @@ const Team = lazy(() => import('../pages/protected/Team'))
 const PointDeVente = lazy(() => import('../pages/protected/PointDeVente'))
 const ProfileSettings = lazy(() => import('../pages/protected/ProfileSettings'))
 const Client = lazy(() => import('../pages/protected/Client'))
-
+const Calcul = lazy(() => import('../pages/protected/Calcul'))
+const Categorie = lazy(() => import('../pages/protected/Categorie'))
 const VenteFlash = lazy(() => import('../pages/protected/VenteFlash'))
 const Produit = lazy(() => import('../pages/protected/Produit'))
 
@@ -20,6 +21,16 @@ const routes = [
   {
     path: '/dashboard', // the url
     component: Dashboard, // view rendered
+    isPrivate: true,
+  },
+  {
+    path: '/categorie', // the url
+    component: Categorie, // view rendered
+    isPrivate: true,
+  },
+  {
+    path: '/calcul', // the url
+    component: Calcul, // view rendered
     isPrivate: true,
   },
   {

@@ -2,7 +2,7 @@
 module.exports = Object.freeze({
     MODAL_BODY_TYPES : {
         USER_DETAIL : "USER_DETAIL",
-        PROMO_ADD_NEW : "PROMO_ADD_NEW",
+       
         PTV_ADD_NEW : "PTV_ADD_NEW",
         CONFIRMATION : "CONFIRMATION",
         DEFAULT : "",
@@ -11,7 +11,11 @@ module.exports = Object.freeze({
         PROMO_ADD_NEW : "PROMO_ADD_NEW",
         MEMBRE_ADD_NEW : "MEMBRE_ADD_NEW",
         VENTE_FLASH_ADD_NEW : "VENTE_FLASH_ADD_NEW",
-        PRODUIT_ADD_NEW :'PRODUIT_ADD_NEW'
+        PRODUIT_ADD_NEW :'PRODUIT_ADD_NEW',
+        PDV_UPDATE : 'PDV_UPDATE',
+        PRODUCT_UPDATE: 'PRODUCT_UPDATE',
+        CATEGORIE_ADD:'CATEGORIE_ADD',
+
     },
 
     RIGHT_DRAWER_TYPES : {

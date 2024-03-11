@@ -1,14 +1,13 @@
-import { useState } from "react"
+import { useState,useEffect } from "react"
 import { useDispatch } from "react-redux"
-import InputText from '../../components/Input/InputText'
 import ErrorText from '../../components/Typography/ErrorText'
 import { showNotification } from "../common/headerSlice"
-import { useAddProdcutMutation ,useGetProductsQuery} from "../../slices/productsApiSlice"
+
+import { useGetProductsQuery,useGetProductDetailsQuery,useUpdateProductMutation } from "../../slices/productsApiSlice"
 
 
 
-
-function AddProduitModal({closeModal}){
+function UpdateProductModal({closeModal,productId }){
     const dispatch = useDispatch()
     const [loading, setLoading] = useState(false)
     const [errorMessage, setErrorMessage] = useState("")
@@ -21,57 +20,65 @@ function AddProduitModal({closeModal}){
     const [CategorieID, setCategorieID] = useState('');
     const [PtsFids, setPtsFids] = useState('');
     const [Prix, setPrix] = useState('');
-    const [addProdcut, isLoading ,refetch] = useAddProdcutMutation();
+   
     const { refetch: refetchProducts } = useGetProductsQuery();
-    const [selectedImage, setSelectedImage] = useState(null);
-
-    const labelContent = selectedImage ? 'Image Selected' : 'Choose Image';
-    const handleImageChange = (e) => {
-        const file = e.target.files[0];
-        setImage(file);
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        const formData = new FormData();
-        formData.append('Image', Image);
-        formData.append('Reference', Reference);
-        formData.append('Libelle', Libelle);
-        formData.append('Categorie', Categorie);
-        formData.append('Montant', Montant);
-        formData.append('Quantite', Quantite);
-        formData.append('CategorieID', CategorieID);
-        formData.append('PtsFids', PtsFids);
-        formData.append('Prix', Prix);
-
-        try {
-            setLoading(true);
-            const response = await addProdcut(formData).unwrap();
-            await refetchProducts();
-            closeModal();
-            console.log(formData)
-            if (response.error) {
-                setErrorMessage(response.error?.data?.message || response.error);
-                
-            } else {
-                // Product added successfully
-                closeModal();
-                refetch();
-                dispatch(showNotification("Product added successfully", "success"));
-            }
-        } catch (error) {
-            setErrorMessage(error?.data?.message || error);
-            
-        } finally {
-            setLoading(false);
-        }
-    };
+    const {
+      data: product,
+      isLoading,
+      refetch,
+      error,
+    } = useGetProductDetailsQuery(productId);
+    const [updateProduct, { isLoading: loadingUpdate }] =
+    useUpdateProductMutation();
     
+    const submitHandler = async (e) => {
+      e.preventDefault();
+      try {
+        await updateProduct({
+            productId,
+          Reference,
+          Image,
+          Libelle,
+          Categorie,
+          Montant,
+          Quantite,
+          CategorieID,
+          PtsFids,
+          Prix,
+          
+        });
+        await refetchProducts();
+        refetch();
+        if (!errorMessage) { // Only dispatch success notification if there's no error message
+          dispatch(showNotification({ message: " Produit Modifié !!", status: 1 }));
+      }
+      } catch (err) {
+         
+        setErrorMessage(err?.data?.message || err.error);
+        
+      }
+    };
+    const handleImageChange = (e) => {
+      const file = e.target.files[0];
+      setImage(file);
+  };
+    useEffect(() => {
+      if (product) {
+        setReference(product.Reference);
+        setImage(product.Image);
+        setLibelle(product.Libelle);
+        setCategorie(product.Category);
+        setMontant(product.Montant);
+        setQuantite(product.Quantite);
+        setPrix(product.Prix);
+        setCategorieID(product.CategoryID);
+        setPtsFids(product.PtsFids);
+      }
+    }, [product]);
 
     return(
         <>
-
-<form onSubmit={handleSubmit}  encType='multipart/form-data'>
+<form onSubmit={submitHandler}  encType='multipart/form-data'>
             <div className="mb-4">
                 <input 
                     type='text'
@@ -160,9 +167,10 @@ function AddProduitModal({closeModal}){
                 <button type="submit" className={"btn btn-primary px-6"} disabled={loading}>Ajouter</button>
             </div>
         </form>
-            
+
+
+<ErrorText styleClass="mt-8">{errorMessage}</ErrorText>
         </>
     )
 }
-
-export default AddProduitModal
+export default UpdateProductModal

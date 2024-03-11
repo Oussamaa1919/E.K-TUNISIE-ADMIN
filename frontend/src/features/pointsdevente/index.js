@@ -3,7 +3,7 @@ import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { showNotification } from "../common/headerSlice"
 import TitleCard from "../../components/Cards/TitleCard"
-import { RECENT_TRANSACTIONS } from "../../utils/dummyData"
+import { pointdeventes } from "../../utils/dummyData"
 import FunnelIcon from '@heroicons/react/24/outline/FunnelIcon'
 import XMarkIcon from '@heroicons/react/24/outline/XMarkIcon'
 import SearchBar from "../../components/Input/SearchBar"
@@ -13,13 +13,15 @@ import Eye from '@heroicons/react/24/outline/EyeIcon'
 import { openModal } from "../common/modalSlice"
 import { CONFIRMATION_MODAL_CLOSE_TYPES, MODAL_BODY_TYPES } from '../../utils/globalConstantUtil'
 import { Link } from "react-router-dom"
+import { useGetPDVsQuery,useDeletePDVMutation } from "../../slices/pointDeVenteApiSlice"
+import LogoPic from "../../images/logoerickayser.png"
 
 
 const TopSideButtons = ({removeFilter, applyFilter, applySearch}) => {
 
     const [filterParam, setFilterParam] = useState("")
     const [searchText, setSearchText] = useState("")
-    const locationFilters = ["Paris", "London", "Canada", "Peru", "Tokyo"]
+    const locationFilters = ["Tunis", "Marsa", "Carthage", "Ben Arouss"]
 
     const showFiltersAndApply = (params) => {
         applyFilter(params)
@@ -45,11 +47,12 @@ const TopSideButtons = ({removeFilter, applyFilter, applySearch}) => {
     const openAddNewTransModal = () => {
         dispatch(openModal({title : "Ajouter un nouveau Point de vente", bodyType : MODAL_BODY_TYPES.TRANSACTION_ADD_NEW}))
     }
+  
     
     return(
 
         <div className="inline-block float-right">
-            <button className="btn px-6 btn-sm normal-case btn-primary float-right ml-2"onClick={() => openAddNewTransModal()} >Add New</button>
+            <button className="btn px-6 btn-sm normal-case btn-primary float-right ml-2"onClick={() => openAddNewTransModal()} >Ajouter</button>
         
             <SearchBar searchText={searchText} styleClass="mr-4 " setSearchText={setSearchText}/>
             {filterParam != "" && <button onClick={() => removeAppliedFilter()} className="btn btn-xs mr-2 btn-active btn-ghost normal-case">{filterParam}<XMarkIcon className="w-4 ml-2"/></button>}
@@ -71,22 +74,49 @@ const TopSideButtons = ({removeFilter, applyFilter, applySearch}) => {
 
 
 function PointDeVente(){
+    const dispatch = useDispatch()
 
+    const openUpdatePdvModal = (pdvId) => {
 
-    const [trans, setTrans] = useState(RECENT_TRANSACTIONS)
+        dispatch(openModal({title : "Modifier Point de vente", bodyType : MODAL_BODY_TYPES.PDV_UPDATE,extraObject: { pdvId } }))
+    }
+    const { data: pointdeventes, refetch, isLoading, error } = useGetPDVsQuery();
+    const [deletePdv] = useDeletePDVMutation();
+    const [errorMessage, setErrorMessage] = useState("")
+
+    const deleteHandler = async (id) => {
+        if (window.confirm('Continuez !')) {
+          try {
+            await deletePdv(id);
+            refetch();
+          } catch (err) {
+            setErrorMessage(err?.data?.message || err.error);
+          }
+        }
+      };
+    const [trans, setTrans] = useState([]);
+
+    useEffect(() => {
+        if (pointdeventes) {
+            setTrans(pointdeventes);
+        }
+    }, [pointdeventes]);
+    if (!trans) {
+        return <div>Loading...</div>;
+    }
 
     const removeFilter = () => {
-        setTrans(RECENT_TRANSACTIONS)
+        setTrans(pointdeventes)
     }
 
     const applyFilter = (params) => {
-        let filteredTransactions = RECENT_TRANSACTIONS.filter((t) => {return t.location == params})
+        let filteredTransactions = pointdeventes.filter((t) => {return t.address == params})
         setTrans(filteredTransactions)
     }
 
     // Search according to name
     const applySearch = (value) => {
-        let filteredTransactions = RECENT_TRANSACTIONS.filter((t) => {return t.name.toLowerCase().includes(value.toLowerCase()) ||  t.email.toLowerCase().includes(value.toLowerCase())})
+        let filteredTransactions = pointdeventes.filter((t) => {return t.name.toLowerCase().includes(value.toLowerCase())})
         setTrans(filteredTransactions)
     }
 
@@ -102,8 +132,7 @@ function PointDeVente(){
                     <tr>
                         <th>Name</th>
                         <th>RH Manager</th>
-                        <th>Clients</th>
-                        <th>Clients Pro</th>
+                       
                         <th>Location</th>
                         <th>Delete</th>
                         <th>Update</th>
@@ -111,30 +140,27 @@ function PointDeVente(){
                     </thead>
                     <tbody>
                         {
-                            trans.map((l, k) => {
-                                return(
-                                    <tr key={k}>
-                                    <td>
-                                        <div className="flex items-center space-x-3">
-                                            <div className="avatar">
-                                                <div className="mask mask-circle w-12 h-12">
-                                                    <img src={l.avatar} alt="Avatar" />
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <div className="font-bold">{l.name}</div>
+                           trans.map((pdv) => {
+                            return(
+                                <tr key={pdv._id}>
+                                <td>
+                                    <div className="flex items-center space-x-3">
+                                        <div className="avatar">
+                                            <div className="mask mask-circle w-12 h-12">
+                                                <img src={LogoPic} alt="Avatar" />
                                             </div>
                                         </div>
-                                    </td>
-                                    <td>{l.email}</td>
-                                    <td><Link to="/app/leads"><button className="btn btn-square btn-ghost" ><Eye className="w-5"/></button></Link></td>
+                                        <div>
+                                            <div className="font-bold">{pdv.name} </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                    <td>{pdv.rhmanager}</td>
+                                   
+                                    <td>{pdv.address}</td>
+                                    <td><button className="btn btn-square btn-ghost" onClick={() => deleteHandler(pdv._id)}><TrashIcon className="w-5"/></button></td>
 
-                                    <td><Link to="/app/leads"><button className="btn btn-square btn-ghost" ><Eye className="w-5"/></button></Link></td>
-
-                                    <td>{l.location}</td>
-                                    <td><button className="btn btn-square btn-ghost" ><TrashIcon className="w-5"/></button></td>
-
-                                 <td><button className="btn btn-square btn-ghost" ><ArrowPath className="w-5"/></button></td>
+                                 <td><button className="btn btn-square btn-ghost" onClick={() => openUpdatePdvModal(pdv._id)}><ArrowPath className="w-5"/></button></td>
 
                                     </tr>
                                 )

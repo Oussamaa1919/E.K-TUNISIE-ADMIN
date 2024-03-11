@@ -22,7 +22,7 @@ router.route('/:id').get(getAdminById);
 router.route('/password').put(protect,updatePassword);
 router.route('/add-membre').post(addMember);
 router.route('/').put(protect,updateAdmin).get(getAdmins);
-router.route('/:id').delete(protect,checkObjectId,deleteAdmin);
+router.route('/:id').delete(checkObjectId,deleteAdmin);
 router.post('/logout', logoutAdmin);
 router.put('/sendpassword', resetAdminPassword);
 export default router;

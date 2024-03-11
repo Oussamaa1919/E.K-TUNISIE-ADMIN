@@ -5,7 +5,6 @@ import ErrorText from '../../../components/Typography/ErrorText'
 import { useAddMemberMutation,useGetAdminsQuery } from "../../../slices/usersApiSlice"
 import { showNotification } from "../../common/headerSlice"
 
-
 function AddMembreModalBody({closeModal}){
     
     

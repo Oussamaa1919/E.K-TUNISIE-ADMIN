@@ -196,21 +196,19 @@ const addMember = asyncHandler(async (req, res) => {
     return res.status(400).json({ errors: errors.array() });
   }
 
+
   const { phone, firstname, lastname, type, email, password } = req.body;
 
   const memberByEmail = await Admin.findOne({ email });
   const memberByPhone = await Admin.findOne({ phone });
 
   if (memberByEmail) {
-    return res
-      .status(400)
-      .json({ errors: [{ msg: 'Email is already in use' }] });
+    throw new Error ( 'Email is already in use' );
   }
 
   if (memberByPhone) {
-    return res
-      .status(400)
-      .json({ errors: [{ msg: 'Phone number is already in use' }] });
+    
+      throw new Error('Phone number is already in use' );
   }
 
   const member = new Admin({
@@ -256,6 +254,17 @@ const updateAdmin = asyncHandler(async (req, res) => {
     check('email', 'Please include a valid email').isEmail(),
     check('firstname', 'Firstname is required').notEmpty(),
     check('lastname', 'Lastname is required').notEmpty(),
+    check('password', 'Password must be at least 8 characters').isLength({
+      min: 8,
+    }),
+    check(
+      'password',
+      'Password must contain at least one uppercase letter'
+    ).matches(/[A-Z]/),
+    check(
+      'password',
+      'Password must contain at least one special character'
+    ).matches(/[$&+,:;=?@#|'<>.^*()%!-]/),
     // Add more validation rules here
   ];
 
@@ -267,14 +276,17 @@ const updateAdmin = asyncHandler(async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
+  if (req.body.password) {
+    updatePassword = req.body.password;
+  }
 
   const updateFields = {
     phone: updatedPhone,
     email: updatedEmail,
     firstname: req.body.firstname,
     lastname: req.body.lastname,
-    type: req.body.type,
-    // Add more fields to update here
+    password:updatePassword,
+    
   };
 
   const updatedAdmin = await Admin.findByIdAndUpdate(adminId, updateFields, {
@@ -294,13 +306,7 @@ const updateAdmin = asyncHandler(async (req, res) => {
 // @access  Private/Admin
 const deleteAdmin = asyncHandler(async (req, res) => {
   const deletedadmin = await Admin.findById(req.params.id);
-  const admin = await Admin.findById(req.admin.id);
-
-  if (admin) {
-    if (admin.type === 'assistant') {
-      res.status(400);
-      throw new Error('you are not allowed to do delete a membre');
-    }
+  
     if (deletedadmin) {
 
     await Admin.deleteOne({ _id: deletedadmin.id });
@@ -309,7 +315,7 @@ const deleteAdmin = asyncHandler(async (req, res) => {
     res.status(404);
     throw new Error('Admin not found');
   }
-}
+
 });
 
 // @desc    Get all users

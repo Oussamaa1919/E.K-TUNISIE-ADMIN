@@ -28,6 +28,16 @@ const routes = [
     name: 'Points de Vente', // name that appear in Sidebar
   },
   {
+    path: '/app/categorie', // url
+    icon: <DocumentIcon className={iconClasses}/>, // icon component
+    name: 'Categorie', // name that appear in Sidebar
+  },
+  {
+    path: '/app/calcul', // url
+    icon: <CurrencyDollarIcon className={iconClasses}/>, // icon component
+    name: 'Calcul', // name that appear in Sidebar
+  },
+  {
     path: '/app/client', // url
     icon: <UsersGroup className={iconClasses}/>, // icon component
     name: 'Clients', // name that appear in Sidebar
@@ -37,6 +47,7 @@ const routes = [
     icon: <Users className={iconClasses}/>, // icon component
     name: 'Clients Pro', // name that appear in Sidebar
   },
+  
   {
     path: '/app/promo', // url
     icon: <InboxArrowDownIcon className={iconClasses}/>, // icon component
